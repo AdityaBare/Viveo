@@ -15,22 +15,18 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS Configuration
+// CORS Configuration (allow frontend origin dynamically)
 app.use(cors({
-  origin: "https://viveo-1.onrender.com"
+  origin: "https://viveo-1.onrender.com", // Match your frontend URL
+  methods: ["GET", "POST"],
+  credentials: true
 }));
 
 // Middleware
 app.use(bodyParser.json());
 
-// Optional: Serve static files if needed
-// app.use(express.static(path.join(__dirname, "../frontend")));
-
-// Serve index.html from frontend directory on GET /
 app.get("/", (req, res) => {
   res.send("✅ Backend is running. POST to /api/generate to use AION.");
-  // Or you can serve the HTML if deploying fullstack from one repo
-  // res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
 // API Endpoint
