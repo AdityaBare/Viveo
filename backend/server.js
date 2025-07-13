@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: "https://viveo.onrender.com", // Match your frontend URL
+  origin: "https://frontend-82pb.onrender.com", // Match your frontend URL
   methods: ["GET", "POST"],
   credentials: true
 }));
