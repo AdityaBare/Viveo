@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AION – Your AI Assistant</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f8f9fa;
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #007BFF;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1rem;
+      color: #555;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    button {
+      width: 100%;
+      font-size: 1rem;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .response {
+      margin-top: 20px;
+      padding: 1.2rem;
+      background: #ffffff;
+      border-left: 5px solid #007BFF;
+      border-radius: 5px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #999;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>🤖 Meet AION</h2>
+  <div class="subtitle">Your AI Assistant – created by Aditya Bare</div>
+
+  <textarea id="prompt" rows="4" placeholder="Ask AION anything about tech, code, or life..."></textarea>
+  <button onclick="sendPrompt()">Send to AION</button>
+
+  <div id="response" class="response" style="display:none;"></div>
+
+  <div class="footer">© 2025 AION Assistant · Developed by Aditya Bare</div>
+
+  <script>
+    async function sendPrompt() {
+      const prompt = document.getElementById("prompt").value.trim();
+      const resBox = document.getElementById("response");
+
+      if (!prompt) return;
+
+      resBox.style.display = "block";
+      resBox.innerText = "AION is thinking... 🤔";
+
+      try {
+        const res = await fetch('http://localhost:5000/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json();
+        resBox.innerText = data.response || "No response from AION.";
+      } catch (err) {
+        resBox.innerText = "❌ AION failed to respond: " + err.message;
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
