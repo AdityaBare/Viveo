@@ -1,4 +1,5 @@
 import { InferenceClient } from "@huggingface/inference";
+import { tools } from "./tools.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -43,7 +44,7 @@ export async function getModelResponse(userPrompt) {
       model: "mistralai/Mistral-Nemo-Instruct-2407",
       messages: [
         {
-          role: "system", // 💡 This is the prototype or personality
+          role: "system",
           content: prototype,
         },
         {
@@ -53,7 +54,27 @@ export async function getModelResponse(userPrompt) {
       ],
     });
 
-    return chatCompletion.choices[0].message.content;
+    let content = chatCompletion.choices[0].message.content;
+
+    // 📦 Look for tool call format like: [tool:calculator:5+5]
+    const toolMatch = content.match(/\[tool:(\w+):(.+?)\]/);
+
+    if (toolMatch) {
+      const toolName = toolMatch[1];
+      const toolInput = toolMatch[2];
+
+      const toolFn = tools[toolName];
+      if (toolFn) {
+        const toolResult = toolFn(toolInput.trim());
+
+        // 📩 Send back the response including tool result
+        content += `\n\n🔧 AION used tool '${toolName}':\n${toolResult}`;
+      } else {
+        content += `\n\n⚠️ Unknown tool '${toolName}'`;
+      }
+    }
+
+    return content;
   } catch (err) {
     console.error("❌ Hugging Face Error:", err.response?.data || err.message);
     return "Error contacting Hugging Face chat model.";
